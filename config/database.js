@@ -1,18 +1,22 @@
-'use strict';
-
 var pg = require('pg');
 var postgrator = require('postgrator');
 
 var conString = process.env.DATABASE_URL || "postgres://postgres:postgres@localhost/pcbbcg";
 
-// Setup postgrator
-postgrator.setConfig({
-    migrationDirectory: __dirname + '/migrations',
-    driver: 'pg',
-    connectionString: conString
-});
+(function() {
+    
+    'use strict';
+
+    // Setup postgrator
+    postgrator.setConfig({
+        migrationDirectory: __dirname + '/migrations',
+        driver: 'pg',
+        connectionString: conString
+    });
 
 // Use migrate to create tables defined in 001.do.pcbbcg-init.sql-file
+// Then insert test data to database (002.do.pcbbcg-test-data.sql)
+/*
 postgrator.migrate('001', function(err, migrations) {
     if(err) {
         console.log(err);
@@ -22,20 +26,58 @@ postgrator.migrate('001', function(err, migrations) {
     postgrator.endConnection(function() {
     });
 });
-
-// This starts initializes a connection pool
-// it will keep idle connections open for a (configurable) 30 seconds
-// and set a limit of 20 (also configurable)
-pg.connect(conString, function(err, client, done) {
+*/
+/* 
+postgrator.migrate('002', function(err, migrations) {
     if(err) {
-        return console.error('error fetching client from pool', err);
+        console.log(err);
+    } else {
+        console.log(migrations);
     }
-    
-    client.query('SELECT $1::int AS number', ['1'], function(err, result) {
-        done();
-        if(err) {
-            return console.error('error running query', err);
-        }
-        console.log(result.rows[0].number);
+    postgrator.endConnection(function() {
     });
 });
+*/
+})();
+
+exports.getAllGames = function() {
+    'use strict';
+    
+    var queryString = 'SELECT * FROM game';
+    
+    pg.connect(conString, function(err, client, done) {
+        if(err) {
+            return console.error('Error fetching client from pool', err);
+        }
+        client.query(queryString, function(err, result) {
+            done();
+            if(err) {
+                return console.error('Error running query', err);
+            }
+            console.log(result.rows);
+            return result.rows;
+        });
+    });
+};
+
+exports.addNewGame = function(data) {
+    'use strict';
+    
+    var queryString = 
+        "INSERT INTO game(title, release_year, developers, publishers, boxart_front, boxart_spine) VALUES ($1,$2,$3,$4,$5,$6)";
+        
+    pg.connect(conString, function(err, client, done) {
+        if(err) {
+            return console.error('Error fetching client from pool', err);
+        }
+        client.query(queryString, [data.title, data.release_year, data.developers, data.publishers, data.boxart_front, data.boxart_spine], function(err, result) {
+            done();
+            if(err) {
+                return console.error('Error running query', err);
+            }
+            console.log(result.rows);
+            return result.rows;
+        });
+
+    });
+};

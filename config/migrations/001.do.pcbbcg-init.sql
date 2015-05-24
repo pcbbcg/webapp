@@ -1,7 +1,11 @@
 CREATE TABLE IF NOT EXISTS game (
-    id bigserial  NOT NULL,
+    id serial  NOT NULL,
     title text  NOT NULL,
-    release_date date  NOT NULL,
+    release_year integer  NOT NULL,
+    developers text  NOT NULL,
+    publishers text  NOT NULL,
+    boxart_front text  NOT NULL,
+    boxart_spine text  NOT NULL,
     CONSTRAINT game_pk PRIMARY KEY (id)
 );
 
@@ -9,13 +13,13 @@ CREATE TABLE IF NOT EXISTS content (
     id serial  NOT NULL,
     title text  NOT NULL,
     description text  NOT NULL,
-    picture text  NOT NULL,
+    boxart_back text  NOT NULL,
     game_id bigserial  REFERENCES game (id),
     CONSTRAINT content_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS users (
-    id bigserial  NOT NULL,
+    id serial  NOT NULL,
     name text  NOT NULL,
     password text  NOT NULL,
     public_profile boolean  NOT NULL,
