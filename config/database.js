@@ -14,32 +14,21 @@ var conString = process.env.DATABASE_URL || "postgres://postgres:postgres@localh
         connectionString: conString
     });
 
-// Use migrate to create tables defined in 001.do.pcbbcg-init.sql-file
-// Then insert test data to database (002.do.pcbbcg-test-data.sql)
-/*
-postgrator.migrate('001', function(err, migrations) {
-    if(err) {
-        console.log(err);
-    } else {
-        console.log(migrations);
-    }
-    postgrator.endConnection(function() {
+    // Use migrate to create tables defined in 001.do.pcbbcg-init.sql-file
+    // Then insert test data to database: 001.do.pcbbcg-test-data.sql
+    postgrator.migrate('001', function(err, migrations) {
+        if(err) {
+            console.log(err);
+        }
+        else {
+            console.log(migrations);
+        }
+        postgrator.endConnection(function() {
+        });
     });
-});
-*/
-/* 
-postgrator.migrate('002', function(err, migrations) {
-    if(err) {
-        console.log(err);
-    } else {
-        console.log(migrations);
-    }
-    postgrator.endConnection(function() {
-    });
-});
-*/
 })();
 
+    
 exports.getAllGames = function() {
     'use strict';
     
@@ -50,12 +39,15 @@ exports.getAllGames = function() {
             return console.error('Error fetching client from pool', err);
         }
         client.query(queryString, function(err, result) {
+            //call `done()` to release the client back to the pool
             done();
             if(err) {
                 return console.error('Error running query', err);
             }
-            console.log(result.rows);
-            return result.rows;
+            else {
+                console.log(result.rows);
+                return result.rows;
+            }
         });
     });
 };
@@ -71,13 +63,15 @@ exports.addNewGame = function(data) {
             return console.error('Error fetching client from pool', err);
         }
         client.query(queryString, [data.title, data.release_year, data.developers, data.publishers, data.boxart_front, data.boxart_spine], function(err, result) {
+            //call `done()` to release the client back to the pool
             done();
             if(err) {
                 return console.error('Error running query', err);
             }
-            console.log(result.rows);
-            return result.rows;
+            else {
+                console.log(result.rowCount);
+                return result.rowCount;
+            }
         });
-
     });
 };
