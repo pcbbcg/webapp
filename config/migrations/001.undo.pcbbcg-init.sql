@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS price;
+
+DROP TABLE IF EXISTS users_content;
+
+DROP TABLE IF EXISTS users;
+
+DROP TABLE IF EXISTS content;
+
+DROP TABLE IF EXISTS game;

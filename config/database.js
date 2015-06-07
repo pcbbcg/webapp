@@ -4,7 +4,6 @@ var postgrator = require('postgrator');
 var conString = process.env.DATABASE_URL || "postgres://postgres:postgres@localhost/pcbbcg";
 
 (function() {
-    
     'use strict';
 
     // Setup postgrator
@@ -15,7 +14,6 @@ var conString = process.env.DATABASE_URL || "postgres://postgres:postgres@localh
     });
 
     // Use migrate to create tables defined in 001.do.pcbbcg-init.sql-file
-    // Then insert test data to database: 001.do.pcbbcg-test-data.sql
     postgrator.migrate('001', function(err, migrations) {
         if(err) {
             console.log(err);
